@@ -11,7 +11,7 @@ module.exports = override(
   addLessLoader({
     javascriptEnabled: true,
     modifyVars: {
-      "@primary-color": "#1DA57A", // you use Ant Design to change theme color.
+      "@primary-color": "#61DAFB", // you use Ant Design to change theme color.
     },
   })
 );
