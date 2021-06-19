@@ -1,57 +1,62 @@
 .login-page {
+  width: 100%;
+  height: 100%;
+  background-color: #ddd;
+  background-image: url("./imgs/logo512.png");
+  background-size: 100% 100%;
+  background-repeat: repeat;
+  background-position: 0 6vh;
+  position: relative;
+  .login-header {
     width: 100%;
-    height: 100%;
-    background-color: #ddd;
-    background-image: url('./imgs/logo512.png');
-    background-size: 100% 100%;
-    background-repeat: repeat;
-    background-position: 0 6vh;
-    position: relative;
-    .login-header {
+    height: 80px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    padding: 0 60px;
+    img {
+      width: 50px;
+      height: 50px;
+      transition: 1s;
+    }
+    img:hover {
+      transform: rotate(360deg);
+    }
+    h1 {
+      color: white;
+      font-size: 40px;
+      margin: 0 0 0 20px;
+    }
+  }
+  .login-section {
+    width: 500px;
+    height: fit-content;
+    background-color: #fff;
+    padding: 0 80px 30px 80px;
+    box-sizing: border-box;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -250px;
+    margin-top: -200px;
+    box-shadow: 0 0 20px rgba(145, 141, 141, 0.75);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    h2 {
+      text-align: center;
+      padding-top: 20px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+    .login-form {
+      margin-top: 30px;
+      width: 100%;
+      .login-form-button {
         width: 100%;
-        height: 80px;
-        background-color: black;
-        display: flex;
-        align-items: center;
-        padding: 0 60px;
-        img {
-            width: 50px;
-            height: 50px;
-        }
-        h1 {
-            color: white;
-            font-size: 40px;
-            margin: 0 0 0 20px;
-        }
+        border-radius: 10px;
+      }
     }
-    .login-section {
-        width: 500px;
-        height: fit-content;
-        background-color: #fff;
-        padding:  0 80px 30px 80px;
-        box-sizing: border-box;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin-left: -250px;
-        margin-top: -200px;
-        box-shadow: 0 0 20px rgba(145, 141, 141, 0.75);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        h2 {
-            text-align: center;
-            padding-top: 20px;
-            font-size: 30px;
-            font-weight: bold;
-        }
-        .login-form {
-            margin-top: 30px;
-            width: 100%;
-            .login-form-button {
-                width: 100%;
-            }
-        }
-    }
+  }
 }
