@@ -1,19 +1,46 @@
 import React, { Component } from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import {login} from '../../apis/index';
+import storage from '../../utils/storageUtil';
 
 import "./login.less";
 import logo from "./imgs/logo512.png";
 
 export default class Login extends Component {
-  onFinish = (values) => {
+  onFinish = async (values) => {
     console.log(values);
+    try {
+      const {username, password} = values;
+
+      const res = await login(username, password);
+
+      console.log(res);
+      if (res.status === 0) {
+        message.success('Login successfully!');
+
+        // store the user info
+        storage.user = res.data;
+
+        // no need to come back here, so use replace rather than push
+        this.props.history.replace('/');
+      } else {
+        message.error(res.msg);
+      }
+    } catch(err) {
+      console.log(err);
+    }
   };
   onFailed = (_, values) => {
     console.log('error');
   }
 
   render() {
+    // if already login, no need to show this page
+    if (storage.user && storage.user._id) {
+      this.props.history.replace('/');
+    }
+
     return (
       <div className="login-page">
         <header className="login-header">
