@@ -5,7 +5,7 @@ import {login} from '../../apis/index';
 import storage from '../../utils/storageUtil';
 
 import "./login.less";
-import logo from "./imgs/logo512.png";
+import logo from "../../assets/imgs/logo512.png";
 
 export default class Login extends Component {
   onFinish = async (values) => {

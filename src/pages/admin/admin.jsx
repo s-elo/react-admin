@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Layout } from "antd";
 import storage from "../../utils/storageUtil";
 import Header from "../../components/header";
-import Menu from "../../components/menu";
+import SideBar from "../../components/side-bar";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -16,7 +16,7 @@ export default class Admin extends Component {
     return (
       <Layout style={{ height: "100%" }}>
         <Sider>
-          <Menu></Menu>
+          <SideBar></SideBar>
         </Sider>
         <Layout>
           <Header></Header>
