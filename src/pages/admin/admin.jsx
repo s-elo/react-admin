@@ -1,8 +1,20 @@
 import React, { Component } from "react";
+import { Switch, Route, Redirect } from "react-router-dom";
+
 import { Layout } from "antd";
+
 import storage from "../../utils/storageUtil";
 import Header from "../../components/header";
 import SideBar from "../../components/side-bar";
+
+import Home from "../home/home";
+import User from "../user/user";
+import Category from "../category/category";
+import Product from "../product/product";
+import Role from "../role/role";
+import Bar from "../charts/bar";
+import Line from "../charts/line";
+import Pie from "../charts/pie";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -16,7 +28,7 @@ export default class Admin extends Component {
     return (
       <Layout style={{ height: "100%" }}>
         <Sider>
-          <SideBar></SideBar>
+          <SideBar userInfo={userInfo}></SideBar>
         </Sider>
         <Layout>
           <Header></Header>
@@ -27,7 +39,18 @@ export default class Admin extends Component {
               padding: "20px",
             }}
           >
-            Content
+            <Switch>
+              <Route path="/home" component={Home} />
+              <Route path="/user" component={User} />
+              <Route path="/category" component={Category} />
+              <Route path="/product" component={Product} />
+              <Route path="/role" component={Role} />
+              <Route path="/charts/bar" component={Bar} />
+              <Route path="/charts/line" component={Line} />
+              <Route path="/charts/pie" component={Pie} />
+              {/* if there is no match above */}
+              <Redirect to="/home" />
+            </Switch>
           </Content>
           <Footer
             style={{

@@ -1,20 +1,69 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { Menu } from "antd";
-import {
-  AppstoreOutlined,
-  PieChartOutlined,
-  ContainerOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import * as Icons from "@ant-design/icons";
 
 import "./index.less";
 import logo from "../../assets/imgs/logo512.png";
 
+import menuList from "../../configs/menuConfig";
+
 const { SubMenu } = Menu;
 
-export default class SideBar extends Component {
+class SideBar extends Component {
+  constructor(props) {
+    super(props);
+
+    // return an array, jsx will resolve it
+    // get the render menu in constructor
+    // so only run the getMenu function once for the first render
+    this.menuList = this.getMenu(menuList);
+  }
+
+  // get the Icon node dymatically
+  getIconNode = (IconName) => {
+    return Icons[IconName] ? React.createElement(Icons[IconName]) : "";
+  };
+
+  getMenu = (menuList) => {
+    return menuList.map((menu) => {
+      if (menu.children) {
+        const {pathname} = this.props.location;
+        // see if there is a sub menu matching current path
+        // then decide if we need to expand the sub menu
+        const matchChild = menu.children.find(menu => menu.key === pathname);
+
+        if (matchChild) {
+          // using its father's key to expand
+          this.openKey = menu.key;
+        }
+
+        return (
+          <SubMenu
+            key={menu.key}
+            icon={this.getIconNode(menu.icon)}
+            title={menu.title}
+          >
+            {this.getMenu(menu.children)}
+          </SubMenu>
+        );
+      } else {
+        return (
+          <Menu.Item key={menu.key} icon={this.getIconNode(menu.icon)}>
+            <Link to={menu.key}>{menu.title}</Link>
+          </Menu.Item>
+        );
+      }
+    });
+  };
+
   render() {
+    const { userInfo } = this.props;
+    // console.log(userInfo);
+
+    // noted that the location is from withRouter
+    const { pathname } = this.props.location;
+
     return (
       <div className="menu">
         <Link to="/" className="logo">
@@ -23,39 +72,18 @@ export default class SideBar extends Component {
         </Link>
 
         <Menu
-          defaultSelectedKeys={["1"]}
-          defaultOpenKeys={["sub1"]}
+          selectedKeys={[pathname]}
+          defaultOpenKeys={[this.openKey]}
           mode="inline"
           theme="dark"
           //   inlineCollapsed={this.state.collapsed}
         >
-          <Menu.Item key="1" icon={<PieChartOutlined />}>
-            Home
-          </Menu.Item>
-          <SubMenu key="sub1" icon={<MailOutlined />} title="Products">
-            <Menu.Item key="5">Category</Menu.Item>
-            <Menu.Item key="6">Item</Menu.Item>
-          </SubMenu>
-          <Menu.Item key="3" icon={<ContainerOutlined />}>
-            Users
-          </Menu.Item>
-          <Menu.Item key="1" icon={<PieChartOutlined />}>
-            Roles
-          </Menu.Item>
-          <SubMenu
-            key="sub2"
-            icon={<AppstoreOutlined />}
-            title="Charts"
-          >
-            <Menu.Item key="9">Option 9</Menu.Item>
-            <Menu.Item key="10">Option 10</Menu.Item>
-            <SubMenu key="sub3" title="Submenu">
-              <Menu.Item key="11">Option 11</Menu.Item>
-              <Menu.Item key="12">Option 12</Menu.Item>
-            </SubMenu>
-          </SubMenu>
+          {this.menuList}
         </Menu>
       </div>
     );
   }
 }
+
+// withRouter will return a component and give the router-related props to it
+export default withRouter(SideBar);
