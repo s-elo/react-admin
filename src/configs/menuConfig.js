@@ -1,4 +1,4 @@
-export default [
+const menuList = [
   {
     title: "Home",
     key: "/home",
@@ -22,3 +22,5 @@ export default [
     ],
   },
 ];
+
+export default menuList;

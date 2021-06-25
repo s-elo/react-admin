@@ -3,3 +3,57 @@
   width: 100%;
   background-color: #fff;
 }
+.header .user-info {
+  width: 100%;
+  height: 50%;
+  border-bottom: 2px solid #61dafb;
+  text-align: end;
+  padding-right: 30px;
+  line-height: 40px;
+}
+.header .user-info span {
+  margin-left: 10px;
+}
+.header .user-info span:nth-child(2) {
+  color: #61dafb;
+  cursor: pointer;
+}
+.header .other-info {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+}
+.header .other-info .title {
+  flex: 1;
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  color: black;
+  position: relative;
+}
+.header .other-info .title::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 20px;
+  background-color: white;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.header .other-info .time-weather {
+  flex: 3;
+  text-align: end;
+  height: 100%;
+  line-height: 40px;
+}
+.header .other-info .time-weather span {
+  margin: 0 10px;
+}
+.header .other-info .time-weather img {
+  width: 30px;
+  margin-bottom: 5px;
+}

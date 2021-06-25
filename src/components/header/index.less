@@ -1,5 +1,68 @@
+.trangle(@width, @height, @color) {
+  //   border: @size solid @color;
+  //   border-left: @size solid transparent;
+  //   border-right: @size solid transparent;
+  //   border-bottom: @size solid transparent;
+  //   position: absolute;
+  width: @width;
+  height: @height;
+  background-color: @color;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
 .header {
-    height: 80px;
+  height: 80px;
+  width: 100%;
+  background-color: #fff;
+  .user-info {
     width: 100%;
-    background-color: #fff;
+    height: 50%;
+    border-bottom: 2px solid #61dafb;
+    text-align: end;
+    padding-right: 30px;
+    line-height: 40px;
+    span {
+      margin-left: 10px;
+    }
+    span:nth-child(2) {
+      color: #61dafb;
+      cursor: pointer;
+    }
+  }
+  .other-info {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    .title {
+      flex: 1;
+      text-align: center;
+      font-size: 25px;
+      font-weight: bold;
+      color: black;
+      position: relative;
+      &::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -16px;
+        transform: translateX(-50%);
+        .trangle(70px, 20px, white);
+      }
+    }
+    .time-weather {
+      flex: 3;
+      text-align: end;
+      height: 100%;
+      line-height: 40px;
+      span {
+        margin: 0 10px;
+      }
+      img {
+        width: 30px;
+        margin-bottom: 5px;
+      }
+    }
+  }
 }
