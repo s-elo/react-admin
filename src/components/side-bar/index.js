@@ -58,7 +58,7 @@ class SideBar extends Component {
   };
 
   render() {
-    const { userInfo } = this.props;
+    // const { userInfo } = this.props;
     // console.log(userInfo);
 
     // noted that the location is from withRouter
@@ -67,7 +67,7 @@ class SideBar extends Component {
     return (
       <div className="menu">
         <Link to="/" className="logo">
-          <img src={logo} />
+          <img src={logo} alt="logo" />
           <div className="banner">Super-Admin</div>
         </Link>
 

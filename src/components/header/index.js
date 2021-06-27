@@ -26,7 +26,7 @@ class Header extends Component {
 
     const { pathname } = this.props.location;
 
-    /*BPS*/
+    /*dPS*/
     const stack = [...list];
 
     while (stack.length) {
@@ -89,7 +89,7 @@ class Header extends Component {
           <div className="title">{title}</div>
           <div className="time-weather">
             <span className="time">{currentTime}</span>
-            <img src="http://api.map.baidu.com/images/weather/day/qing.png" />
+            <img src="http://api.map.baidu.com/images/weather/day/qing.png" alt="weather" />
             <span className="weather">Good</span>
           </div>
         </div>
@@ -97,7 +97,7 @@ class Header extends Component {
           // title="Title"
           visible={visible}
           onOk={this.handleOk}
-          confirmLoading={this.confirmLoading}
+          // confirmLoading={this.confirmLoading}
           onCancel={this.handleCancel}
         >
           <p>Are sure to login out?</p>

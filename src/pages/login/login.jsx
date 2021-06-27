@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import {login} from '../../apis/index';
+// import LinkBtn from '../../components/link';
 import storage from '../../utils/storageUtil';
 
 import "./login.less";
@@ -112,7 +113,7 @@ export default class Login extends Component {
               >
                 Log in
               </Button>
-              Or <a href="">register now!</a>
+              {/* Or <LinkBtn>register now!</LinkBtn> */}
             </Form.Item>
           </Form>
         </section>
