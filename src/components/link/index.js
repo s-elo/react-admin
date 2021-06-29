@@ -7,10 +7,13 @@ export default class LinkBtn extends Component {
       color = "#61DAFB",
       width = "fit-content",
       height = "fit-content",
+      ...rest
     } = this.props;
 
     return (
-      <button style={{ color, width, height }}>{this.props.children}</button>
+      <button {...rest} style={{ color, width, height }}>
+        {this.props.children}
+      </button>
     );
   }
 }

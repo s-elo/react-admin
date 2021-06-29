@@ -12,9 +12,8 @@ export default class Category extends Component {
       dataSource: [],
       visible: false,
       modalTitle: "Add category",
+      form: {},
     };
-
-    this.form = {};
 
     this.loading = false;
 
@@ -33,10 +32,12 @@ export default class Category extends Component {
       {
         title: "Operations",
         width: 300,
-        render: () => {
+        render: (_, rowData) => {
           return (
             <span>
-              <LinkBtn>Modify</LinkBtn>
+              <LinkBtn onClick={this.editCategory.bind(this, rowData)}>
+                Modify
+              </LinkBtn>
               <LinkBtn>Detail</LinkBtn>
             </span>
           );
@@ -50,7 +51,7 @@ export default class Category extends Component {
       <Button
         type="primary"
         style={{ borderRadius: "5px" }}
-        onClick={this.addCategory}
+        onClick={this.editCategory.bind(this, null)}
       >
         <PlusOutlined />
         Add
@@ -72,8 +73,18 @@ export default class Category extends Component {
     }
   };
 
-  addCategory = () => {
-    this.setState({ visible: true, modalTitle: "Add category" });
+  editCategory = (rowData) => {
+    if (rowData) {
+      console.log(rowData);
+
+      this.setState({
+        visible: true,
+        modalTitle: "Update category",
+        form: { ...rowData },
+      });
+    } else {
+      this.setState({ visible: true, modalTitle: "Add category", form: {} });
+    }
   };
 
   handleOk = async () => {
@@ -103,7 +114,8 @@ export default class Category extends Component {
   };
 
   render() {
-    const { dataSource, visible, modalTitle } = this.state;
+    // console.log('render');
+    const { dataSource, visible, modalTitle, form } = this.state;
 
     return (
       <Card title="Category list" extra={this.extra} style={{ width: "100%" }}>
