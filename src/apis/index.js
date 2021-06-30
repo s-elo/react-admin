@@ -21,6 +21,14 @@ export function reqAddCategory({parentId, categoryName}) {
   );
 }
 
+export function reqUpdateCategory({categoryId, categoryName}) {
+  return request(
+    `${DOMAIN}/manage/category/update`,
+    { categoryId, categoryName },
+    "POST"
+  );
+}
+
 export function getWeather(location) {
   jsonp(`http://api.map.baidu.com/weather/v1/`, {
     district_id: location,

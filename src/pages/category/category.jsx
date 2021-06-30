@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { Card, Button, Table, message, Modal, Form, Input } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { reqCategory, reqAddCategory } from "../../apis";
+import { Card, Button, Table, message, Modal } from "antd";
+import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { reqCategory, reqAddCategory, reqUpdateCategory } from "../../apis";
 import LinkBtn from "../../components/link";
+import AddForm from "../../components/category/addForm";
+import UpdateForm from "../../components/category/updateForm";
 
 export default class Category extends Component {
   constructor(props) {
@@ -10,11 +12,15 @@ export default class Category extends Component {
 
     this.state = {
       dataSource: [],
-      visible: false,
-      modalTitle: "Add category",
-      form: {},
+      subData: [],
+      parentId: 0,
+      parentName: "",
+      // 0 both close; 1 Add; 2 Update
+      showStatus: 0,
+      // form: {},
     };
 
+    this.category = {};
     this.loading = false;
 
     this.initCol();
@@ -35,10 +41,22 @@ export default class Category extends Component {
         render: (_, rowData) => {
           return (
             <span>
-              <LinkBtn onClick={this.editCategory.bind(this, rowData)}>
+              <LinkBtn
+                onClick={() => {
+                  this.showUpdate(rowData);
+                }}
+              >
                 Modify
               </LinkBtn>
-              <LinkBtn>Detail</LinkBtn>
+              {this.state.parentId === 0 ? (
+                <LinkBtn
+                  onClick={() => {
+                    this.showSubData(rowData);
+                  }}
+                >
+                  Secondary Category
+                </LinkBtn>
+              ) : null}
             </span>
           );
         },
@@ -46,64 +64,110 @@ export default class Category extends Component {
     ];
   }
 
+  /*operation column */
   initExtra() {
     this.extra = (
       <Button
         type="primary"
         style={{ borderRadius: "5px" }}
-        onClick={this.editCategory.bind(this, null)}
+        onClick={() => {
+          this.setState({ showStatus: 1 });
+        }}
       >
         <PlusOutlined />
         Add
       </Button>
     );
   }
+
+  /*when click the secondary category btn */
+  showSubData = (rowData) => {
+    this.setState(
+      {
+        parentId: rowData._id,
+        parentName: rowData.name,
+      },
+      /*after state changed and render */
+      () => {
+        this.getCategory();
+      }
+    );
+  };
+
+  /*when click the go back category title */
+  showCategory = () => {
+    this.setState({
+      parentId: 0,
+    });
+  };
+
+  /*get category list first or secondary */
   getCategory = async () => {
     this.loading = true;
 
-    const res = await reqCategory(0);
+    const { parentId } = this.state;
+
+    const res = await reqCategory(parentId);
     // console.log(res);
 
     this.loading = false;
 
     if (res.status === 0) {
-      this.setState({ dataSource: res.data });
+      if (parentId === 0) {
+        this.setState({ dataSource: res.data });
+      } else {
+        this.setState({ subData: res.data });
+      }
     } else {
       message.error("failed to get the list~");
     }
   };
 
-  editCategory = (rowData) => {
-    if (rowData) {
-      console.log(rowData);
+  // editCategory = (rowData) => {
+  //   if (rowData) {
+  //     console.log(rowData);
 
-      this.setState({
-        visible: true,
-        modalTitle: "Update category",
-        form: { ...rowData },
+  //     this.setState({
+  //       visible: true,
+  //       modalTitle: "Update category",
+  //       form: { ...rowData },
+  //     });
+  //   } else {
+  //     this.setState({ visible: true, modalTitle: "Add category", form: {} });
+  //   }
+  // };
+
+  showUpdate = (rowData) => {
+    this.setState({ showStatus: 2 });
+
+    this.category = rowData;
+
+    // it is undefined for the fisrt time render
+    if (this.formInstance) {
+      this.formInstance.resetFields();
+
+      this.formInstance.setFieldsValue({
+        categoryName: rowData.name,
       });
-    } else {
-      this.setState({ visible: true, modalTitle: "Add category", form: {} });
     }
   };
 
   handleOk = async () => {
-    const res = await reqAddCategory(this.form);
+    const values = this.formInstance.getFieldsValue(true);
 
-    if (res.status === 0) {
-      message.success("Add successfully!");
+    await reqUpdateCategory({
+      categoryId: this.category._id,
+      categoryName: values.categoryName,
+    });
 
-      this.getCategory();
+    this.handleCancel();
 
-      this.setState({ visible: false });
-    } else {
-      message.error("something wrong, please try again~");
-    }
+    this.getCategory();
   };
 
   handleCancel = () => {
     this.setState({
-      visible: false,
+      showStatus: 0,
     });
   };
 
@@ -115,13 +179,29 @@ export default class Category extends Component {
 
   render() {
     // console.log('render');
-    const { dataSource, visible, modalTitle, form } = this.state;
+    const { dataSource, parentId, parentName, subData, showStatus } =
+      this.state;
+
+    const title =
+      parentId === 0 ? (
+        "Category List"
+      ) : (
+        <div>
+          <LinkBtn onClick={this.showCategory}>Category List</LinkBtn>
+          <ArrowRightOutlined style={{ marginRight: 5 }} />
+          <span>{parentName}</span>
+        </div>
+      );
+
+    const modalTitle = showStatus === 1 ? "Add category" : "Update category";
+
+    const category = this.category || {};
 
     return (
-      <Card title="Category list" extra={this.extra} style={{ width: "100%" }}>
+      <Card title={title} extra={this.extra} style={{ width: "100%" }}>
         <Table
           loading={this.loading}
-          dataSource={dataSource}
+          dataSource={parentId === 0 ? dataSource : subData}
           columns={this.columns}
           rowKey="_id"
           bordered
@@ -137,47 +217,24 @@ export default class Category extends Component {
         />
         <Modal
           title={modalTitle}
-          visible={visible}
+          visible={showStatus === 1}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <Form
-            name="basic"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 20 }}
-            initialValues={{ parentId: 0 }}
-            // onFinish={this.onFinish}
-            // onFinishFailed={this.onFinishFailed}
-          >
-            <Form.Item
-              label="parentId"
-              name="parentId"
-              rules={[
-                { required: true, message: "Please input the parentId!" },
-              ]}
-            >
-              <Input
-                onChange={(e) => {
-                  this.formChange(e, "parentId");
-                }}
-                disabled={true}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="categoryName"
-              name="categoryName"
-              rules={[
-                { required: true, message: "Please input the category name!" },
-              ]}
-            >
-              <Input
-                onChange={(e) => {
-                  this.formChange(e, "categoryName");
-                }}
-              />
-            </Form.Item>
-          </Form>
+          <AddForm />
+        </Modal>
+        <Modal
+          title={modalTitle}
+          visible={showStatus === 2}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <UpdateForm
+            categoryName={category.name}
+            getForm={(form) => {
+              this.formInstance = form;
+            }}
+          />
         </Modal>
       </Card>
     );
