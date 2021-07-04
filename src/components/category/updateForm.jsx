@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { Form, Input } from "antd";
-import { login } from "../../apis";
-// import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export default class UpdateForm extends Component {
-  //   static propTypes = {
-  //     categoryName: PropTypes.string.isRequired
-  //   }
+  static propTypes = {
+    categoryName: PropTypes.string.isRequired,
+    getForm: PropTypes.func,
+  };
+
   formRef = React.createRef();
 
   componentDidMount() {

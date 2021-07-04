@@ -72,6 +72,11 @@ export default class Category extends Component {
         style={{ borderRadius: "5px" }}
         onClick={() => {
           this.setState({ showStatus: 1 });
+          this.addForm &&
+            this.addForm.setFieldsValue({
+              categoryName: "",
+              parentId: 0,
+            });
         }}
       >
         <PlusOutlined />
@@ -98,6 +103,8 @@ export default class Category extends Component {
   showCategory = () => {
     this.setState({
       parentId: 0,
+      subData: [],
+      parentName: "",
     });
   };
 
@@ -123,30 +130,16 @@ export default class Category extends Component {
     }
   };
 
-  // editCategory = (rowData) => {
-  //   if (rowData) {
-  //     console.log(rowData);
-
-  //     this.setState({
-  //       visible: true,
-  //       modalTitle: "Update category",
-  //       form: { ...rowData },
-  //     });
-  //   } else {
-  //     this.setState({ visible: true, modalTitle: "Add category", form: {} });
-  //   }
-  // };
-
   showUpdate = (rowData) => {
     this.setState({ showStatus: 2 });
 
     this.category = rowData;
 
     // it is undefined for the fisrt time render
-    if (this.formInstance) {
-      this.formInstance.resetFields();
+    if (this.updateForm) {
+      this.updateForm.resetFields();
 
-      this.formInstance.setFieldsValue({
+      this.updateForm.setFieldsValue({
         categoryName: rowData.name,
       });
     }
@@ -155,10 +148,26 @@ export default class Category extends Component {
   handleOk = async () => {
     const values = this.formInstance.getFieldsValue(true);
 
-    await reqUpdateCategory({
-      categoryId: this.category._id,
-      categoryName: values.categoryName,
-    });
+    if (this.state.showStatus === 1) {
+      try {
+        await reqAddCategory(values);
+
+        message.success("add successfully");
+      } catch {
+        message.error("failed to add");
+      }
+    } else {
+      try {
+        await reqUpdateCategory({
+          categoryId: this.category._id,
+          categoryName: values.categoryName,
+        });
+
+        message.success("update successfully");
+      } catch {
+        message.error("failed to update");
+      }
+    }
 
     this.handleCancel();
 
@@ -169,12 +178,6 @@ export default class Category extends Component {
     this.setState({
       showStatus: 0,
     });
-  };
-
-  formChange = (e, key) => {
-    const { value } = e.target;
-
-    this.form[key] = value;
   };
 
   render() {
@@ -221,7 +224,12 @@ export default class Category extends Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <AddForm />
+          <AddForm
+            categoryList={dataSource}
+            getForm={(form) => {
+              this.addForm = form;
+            }}
+          />
         </Modal>
         <Modal
           title={modalTitle}
@@ -230,9 +238,9 @@ export default class Category extends Component {
           onCancel={this.handleCancel}
         >
           <UpdateForm
-            categoryName={category.name}
+            categoryName={category.name || ""}
             getForm={(form) => {
-              this.formInstance = form;
+              this.updateForm = form;
             }}
           />
         </Modal>
