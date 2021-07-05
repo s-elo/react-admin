@@ -41,7 +41,13 @@ export default class AddForm extends Component {
             })}
           </Select>
         </Form.Item>
-        <Form.Item label="categoryName" name="categoryName">
+        <Form.Item
+          label="categoryName"
+          name="categoryName"
+          rules={[
+            { required: true, message: "Please input the category name!" },
+          ]}
+        >
           <Input />
         </Form.Item>
       </Form>

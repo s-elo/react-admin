@@ -13,7 +13,7 @@ export function reqCategory(parentId) {
   return request(`${DOMAIN}/manage/category/list`, { parentId }, "GET");
 }
 
-export function reqAddCategory({parentId, categoryName}) {
+export function reqAddCategory({ parentId, categoryName }) {
   return request(
     `${DOMAIN}/manage/category/add`,
     { parentId, categoryName },
@@ -21,13 +21,39 @@ export function reqAddCategory({parentId, categoryName}) {
   );
 }
 
-export function reqUpdateCategory({categoryId, categoryName}) {
+export function reqUpdateCategory({ categoryId, categoryName }) {
   return request(
     `${DOMAIN}/manage/category/update`,
     { categoryId, categoryName },
     "POST"
   );
 }
+
+export function reqGetProducts(pageNum = 1, pageSize = 5) {
+  return request(`${DOMAIN}/manage/product/list`, { pageNum, pageSize }, "GET");
+}
+
+export function reqAddProduct({
+  categoryId,
+  pCategoryId,
+  name,
+  desc = "",
+  price = 999,
+  detail = "",
+  img = "",
+}) {
+  return request(
+    `${DOMAIN}/manage/product/add`,
+    { categoryId, pCategoryId, name, desc, price, detail, img },
+    "POST"
+  );
+}
+
+// reqAddProduct({
+//   categoryId: '60d86b55d1912169f0ef915f',
+//   pCategoryId: 0,
+//   name: 'superleo666',
+// });
 
 export function getWeather(location) {
   jsonp(`http://api.map.baidu.com/weather/v1/`, {

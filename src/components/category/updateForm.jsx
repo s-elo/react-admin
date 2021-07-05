@@ -24,7 +24,13 @@ export default class UpdateForm extends Component {
         wrapperCol={{ span: 20 }}
         initialValues={{ categoryName: categoryName }}
       >
-        <Form.Item label="categoryName" name="categoryName">
+        <Form.Item
+          label="categoryName"
+          name="categoryName"
+          rules={[
+            { required: true, message: "Please input the category name!" },
+          ]}
+        >
           <Input />
         </Form.Item>
       </Form>

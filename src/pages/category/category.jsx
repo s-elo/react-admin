@@ -146,18 +146,23 @@ export default class Category extends Component {
   };
 
   handleOk = async () => {
-    const values = this.formInstance.getFieldsValue(true);
+    // const values = this.formInstance.getFieldsValue(true);
 
     if (this.state.showStatus === 1) {
       try {
+        const values = await this.addForm.validateFields();
+
         await reqAddCategory(values);
 
         message.success("add successfully");
       } catch {
         message.error("failed to add");
+        return;
       }
     } else {
       try {
+        const values = await this.updateForm.validateFields();
+
         await reqUpdateCategory({
           categoryId: this.category._id,
           categoryName: values.categoryName,
@@ -166,6 +171,7 @@ export default class Category extends Component {
         message.success("update successfully");
       } catch {
         message.error("failed to update");
+        return;
       }
     }
 
