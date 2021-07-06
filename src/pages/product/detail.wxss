@@ -1,0 +1,13 @@
+span {
+  font-size: 16px;
+}
+span label {
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+span img {
+  width: 150px;
+  height: 150px;
+  border: 1px solid #ddd;
+}
