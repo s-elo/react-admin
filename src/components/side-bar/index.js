@@ -31,7 +31,8 @@ class SideBar extends Component {
         const {pathname} = this.props.location;
         // see if there is a sub menu matching current path
         // then decide if we need to expand the sub menu
-        const matchChild = menu.children.find(menu => menu.key === pathname);
+        // including matching the menu.key/xxx/xxx;
+        const matchChild = menu.children.find(menu => pathname.indexOf(menu.key) === 0);
 
         if (matchChild) {
           // using its father's key to expand
@@ -58,11 +59,14 @@ class SideBar extends Component {
   };
 
   render() {
-    // const { userInfo } = this.props;
-    // console.log(userInfo);
-
     // noted that the location is from withRouter
-    const { pathname } = this.props.location;
+    // because it is not a route component
+    let { pathname } = this.props.location;
+
+    // match the /product/xxx/xxx
+    if (pathname.indexOf('/product') === 0) {
+      pathname = '/product';
+    }
 
     return (
       <div className="menu">

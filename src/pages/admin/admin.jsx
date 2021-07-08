@@ -27,16 +27,17 @@ export default class Admin extends Component {
     }
     return (
       <Layout style={{ height: "100%" }}>
-        <Sider>
+        <Sider style={{ height: "100%" }}>
           <SideBar userInfo={userInfo}></SideBar>
         </Sider>
-        <Layout>
+        <Layout style={{height: 'auto'}}>
           <Header></Header>
           <Content
             style={{
-              backgroundColor: "white",
-              margin: "20px",
+              // backgroundColor: "white",
+              // margin: "20px",
               padding: "20px",
+              minHeight: 500
             }}
           >
             <Switch>

@@ -68,7 +68,13 @@ export default class Home extends Component {
 
   initExtra = () => {
     this.extra = (
-      <Button type="primary" style={{ borderRadius: "5px" }} onClick={() => {}}>
+      <Button
+        type="primary"
+        style={{ borderRadius: "5px" }}
+        onClick={() => {
+          this.props.history.push("/product/addUpdate");
+        }}
+      >
         <PlusOutlined />
         Add Item
       </Button>
@@ -118,7 +124,13 @@ export default class Home extends Component {
               >
                 Detail
               </LinkBtn>
-              <LinkBtn>Modify</LinkBtn>
+              <LinkBtn
+                onClick={() => {
+                  this.props.history.push("/product/addUpdate", item);
+                }}
+              >
+                Modify
+              </LinkBtn>
             </div>
           );
         },
