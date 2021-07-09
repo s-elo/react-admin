@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Card, Form, Input, Cascader, Upload, Button } from "antd";
+import { Card, Form, Input, Cascader, Button, message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import LinkBtn from "../../components/link";
-import { reqCategory } from "../../apis";
+import { reqCategory, reqAddOrUpdate } from "../../apis";
 import PicturesWall from "../../components/product/pictureWall";
 
 const { Item } = Form;
@@ -14,14 +14,13 @@ export default class AddUpdate extends Component {
 
     this.state = {
       categoryList: [],
+      selectedCategory: [],
     };
 
     this.pictureWall = React.createRef();
 
     this.isUpdate = !!this.props.location.state;
     this.product = this.props.location.state || {};
-
-    this.selectedCategory = [];
 
     this.getCategory();
 
@@ -31,32 +30,49 @@ export default class AddUpdate extends Component {
   getCategory = async () => {
     const { data } = await reqCategory(0);
 
+    const categoryList = data.map((item) => ({
+      value: item._id,
+      label: item.name,
+      isLeaf: false,
+    }));
+
+    const { selectedCategory } = this.state;
+
     if (this.isUpdate) {
       const { pCategoryId } = this.product;
 
+      // only one level
       if (pCategoryId === "0") {
         const selectedItem = data.find(
           (v) => v._id === this.product.categoryId
         );
 
-        this.selectedCategory.push(selectedItem._id);
+        selectedCategory.push(selectedItem._id);
       } else {
+        // second level
         const { data } = await reqCategory(pCategoryId);
 
         const selectedItem = data.find(
           (v) => v._id === this.product.categoryId
         );
 
-        this.selectedCategory.push(pCategoryId, selectedItem._id);
+        selectedCategory.push(pCategoryId, selectedItem._id);
+
+        const children = data.map((item) => ({
+          value: item._id,
+          label: item.name,
+          isLeaf: true,
+        }));
+
+        // only the one has chidren can have the children key
+        const pCategory = categoryList.find((item) => item.value === pCategoryId);
+        pCategory.children = children;
       }
     }
 
     this.setState({
-      categoryList: data.map((item) => ({
-        value: item._id,
-        label: item.name,
-        isLeaf: false,
-      })),
+      categoryList,
+      selectedCategory,
     });
   };
 
@@ -77,11 +93,34 @@ export default class AddUpdate extends Component {
     );
   };
 
-  onFinish = (values) => {
-    console.log(values);
+  onFinish = async (values) => {
+    const { name, desc, price, category } = values;
+
+    const product = { name, desc, price };
+
+    if (category.length > 1) {
+      product.pCategoryId = category[0];
+      product.categoryId = category[1];
+    } else {
+      product.pCategoryId = "0";
+      product.categoryId = category[0];
+    }
+
+    if (this.isUpdate) product._id = this.product._id;
+
     // father use the function from son
-    const imgs = this.pictureWall.current.getImgs();
-    console.log(imgs);
+    product.imgs = this.pictureWall.current.getImgs();
+
+    const res = await reqAddOrUpdate(product);
+
+    if (res.status === 0) {
+      message.success(
+        this.isUpdate ? "update successfully" : "add successfully"
+      );
+      this.props.history.goBack();
+    } else {
+      message.error(this.isUpdate ? "failed to update" : "failed to add");
+    }
   };
 
   loadCategory = async (selectedOptions) => {
@@ -104,24 +143,21 @@ export default class AddUpdate extends Component {
     });
   };
 
-  getImgUrls(imgs) {
-    console.log(imgs);
-  }
-
   render() {
-    const { isUpdate, product } = this;
+    const { name, desc, price, imgs } = this.product;
 
-    const { categoryList } = this.state;
+    const { categoryList, selectedCategory } = this.state;
 
     return (
       <Card title={this.cardTitle}>
         <Form
           wrapperCol={{ span: 8 }}
-          labelCol={{ span: 2 }}
+          labelCol={{ span: 3 }}
           onFinish={this.onFinish}
+          // defaultValue={}
         >
           <Item
-            initialValue={product.name}
+            initialValue={name}
             label="Name"
             name="name"
             rules={[
@@ -132,7 +168,7 @@ export default class AddUpdate extends Component {
           </Item>
 
           <Item
-            initialValue={product.desc}
+            initialValue={desc}
             label="Description"
             name="desc"
             rules={[
@@ -146,7 +182,7 @@ export default class AddUpdate extends Component {
           </Item>
 
           <Item
-            initialValue={product.price}
+            initialValue={price}
             label="Price"
             name="price"
             rules={[
@@ -170,7 +206,7 @@ export default class AddUpdate extends Component {
           </Item>
 
           <Item
-            initialValue={this.selectedCategory}
+            initialValue={selectedCategory}
             label="Category"
             name="category"
             rules={[
@@ -186,19 +222,8 @@ export default class AddUpdate extends Component {
               changeOnSelect
             />
           </Item>
-          <Item
-            label="Images"
-          >
-            <PicturesWall ref={this.pictureWall} />
-          </Item>
-          <Item
-            label="Detail"
-            name="detail"
-            rules={[
-              { required: true, message: "Please provide the product detail!" },
-            ]}
-          >
-            <Input placeholder="please give the product name" />
+          <Item label="Images">
+            <PicturesWall ref={this.pictureWall} imgs={imgs} />
           </Item>
           <Item>
             <Button type="primary" htmlType="submit">

@@ -19,25 +19,30 @@ import Pie from "../charts/pie";
 const { Footer, Sider, Content } = Layout;
 
 export default class Admin extends Component {
-  render() {
-    let userInfo = {};
+  constructor(props) {
+    super(props);
 
     if (storage.user && storage.user._id) {
-      userInfo = storage.user;
+      this.userInfo = storage.user;
+    } else {
+      this.props.history.push("/login");
     }
+  }
+
+  render() {
     return (
       <Layout style={{ height: "100%" }}>
         <Sider style={{ height: "100%" }}>
-          <SideBar userInfo={userInfo}></SideBar>
+          <SideBar userInfo={this.userInfo}></SideBar>
         </Sider>
-        <Layout style={{height: 'auto'}}>
+        <Layout style={{ height: "auto" }}>
           <Header></Header>
           <Content
             style={{
               // backgroundColor: "white",
               // margin: "20px",
               padding: "20px",
-              minHeight: 500
+              minHeight: 500,
             }}
           >
             <Switch>

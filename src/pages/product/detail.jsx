@@ -81,7 +81,11 @@ export default class Detail extends Component {
       <span>
         <label>Images:</label>
         {imgs.map((img) => (
-          <img key={img} src={img} alt={name} />
+          <img
+            key={img}
+            src={`http://localhost:5000/upload/${img}`}
+            alt={name}
+          />
         ))}
       </span>,
       <span>

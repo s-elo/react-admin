@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Card, Select, Input, Button, Table, message, Switch } from "antd";
-import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import LinkBtn from "../../components/link";
 import {
   reqGetProducts,

@@ -1,6 +1,8 @@
 import React from "react";
 import { Upload, Modal, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import { reqDeleteImg } from "../../apis";
+import PropTypes from "prop-types";
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -12,12 +14,34 @@ function getBase64(file) {
 }
 
 export default class PicturesWall extends React.Component {
-  state = {
-    previewVisible: false,
-    previewImage: "",
-    previewTitle: "",
-    fileList: [],
+  static propTypes = {
+    imgs: PropTypes.array,
   };
+
+  constructor(props) {
+    super(props);
+
+    let fileList = [];
+
+    // for update
+    const { imgs } = this.props;
+
+    if (imgs && imgs.length) {
+      fileList = imgs.map((img, index) => ({
+        uid: -index,
+        name: img,
+        status: "done",
+        url: `http://localhost:5000/upload/${img}`,
+      }));
+    }
+
+    this.state = {
+      previewVisible: false,
+      previewImage: "",
+      // previewTitle: "",
+      fileList,
+    };
+  }
 
   getImgs = () => {
     return this.state.fileList.map((file) => file.name);
@@ -38,21 +62,31 @@ export default class PicturesWall extends React.Component {
     });
   };
 
-  handleChange = ({ file, fileList }) => {
+  handleChange = async ({ file, fileList }) => {
     if (file.status === "done") {
-      message.success("upload successfully");
-      fileList[fileList.length - 1].name = file.response.data.name;
-    }
+      const ret = file.response;
 
-    if (file.status === "error ") {
-      message.error("fialed to upload");
+      if (ret.status === 0) {
+        message.success("upload successfully");
+        fileList[fileList.length - 1].name = ret.data.name;
+      } else {
+        message.error("fialed to upload");
+      }
+    } else if (file.status === "removed") {
+      const res = await reqDeleteImg(file.name);
+
+      if (res.status === 0) {
+        message.success("delete successfully");
+      } else {
+        message.status.error("failed to delete");
+      }
     }
 
     this.setState({ fileList });
   };
 
   render() {
-    const { previewVisible, previewImage, fileList, previewTitle } = this.state;
+    const { previewVisible, previewImage, fileList } = this.state;
     const uploadButton = (
       <div>
         <PlusOutlined />
@@ -74,7 +108,7 @@ export default class PicturesWall extends React.Component {
         </Upload>
         <Modal
           visible={previewVisible}
-          title={previewTitle}
+          // title={previewTitle}
           footer={null}
           onCancel={this.handleCancel}
         >

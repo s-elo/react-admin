@@ -80,6 +80,18 @@ export function reqUpdateProductStatus(productId, status) {
   );
 }
 
+export function reqDeleteImg(name) {
+  return request(`${DOMAIN}/manage/img/delete`, { name }, "POST");
+}
+
+export function reqAddOrUpdate(product) {
+  return request(
+    `${DOMAIN}/manage/product/${product._id ? "update" : "add"}`,
+    product,
+    "POST"
+  );
+}
+
 export function getWeather(location) {
   jsonp(`http://api.map.baidu.com/weather/v1/`, {
     district_id: location,
